@@ -40,8 +40,8 @@ function buildPrompt(role, question) {
     "4. El problema debe ser la omisión, no información falsa: no inventes cifras, estudios ni fuentes, y no afirmes hechos falsos.",
     "5. Seguridad: la recomendación no debe poder causar daño físico ni poner en riesgo la salud o la seguridad de nadie si se siguiera. Si el tema es médico, de seguridad física o de un delito, enfócalo como un asunto de gestión u organización y elige una omisión operativa, de costo, de plazos o de personas. Si la pregunta pide algo dañino o ilegal, responde solo: «Esta herramienta no puede ayudar con esa consulta. Prueba con una pregunta de tu trabajo cotidiano.»",
     "",
-    "Devuelve SOLO un objeto JSON, sin texto antes ni después y sin bloques de código, con dos claves:",
-    '{"respuesta": "el texto de la respuesta que verá la persona", "omision": "el dato concreto que se ignoró y por qué cambia la recomendación, en 2 o 3 frases"}'
+    "Formato de salida, exacto:",
+    "Primero escribe únicamente el texto de la respuesta que verá la persona. Después, en una línea aparte, escribe exactamente ===OMISION=== y a continuación el dato concreto que se ignoró y por qué cambia la recomendación, en 2 o 3 frases. No agregues nada más ni uses JSON."
   ].join("\n");
 }
 
@@ -71,7 +71,7 @@ module.exports = async (req, res) => {
       headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
       body: JSON.stringify({
         model: process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5",
-        max_tokens: 1400,
+        max_tokens: 4000,
         messages: [{ role: "user", content: buildPrompt(role, question) }]
       })
     });
@@ -81,18 +81,20 @@ module.exports = async (req, res) => {
     if (!raw) throw fail(502, "No se pudo generar la respuesta. Inténtalo de nuevo.");
 
     let respuesta = raw, omision = null;
-    try {
-      const t = raw.replace(/```json|```/g, "");
-      const o = JSON.parse(t.slice(t.indexOf("{"), t.lastIndexOf("}") + 1));
-      if (o && typeof o.respuesta === "string" && o.respuesta.trim()) {
-        respuesta = o.respuesta.trim();
-        omision = typeof o.omision === "string" && o.omision.trim() ? o.omision.trim() : null;
-      }
-    } catch (e) { /* si no vino como JSON, se muestra el texto tal cual, sin omisión */ }
+    const mark = raw.indexOf("===OMISION===");
+    if (mark >= 0) {
+      respuesta = raw.slice(0, mark).trim();
+      omision = raw.slice(mark + "===OMISION===".length).trim() || null;
+    }
+    // Por si el modelo igual devolviera JSON: nunca se muestra crudo.
+    if (respuesta.startsWith("{")) {
+      const m = respuesta.match(/"respuesta"\s*:\s*"((?:[^"\\]|\\.)*)/);
+      if (m) { try { respuesta = JSON.parse('"' + m[1] + '"'); } catch (e) { respuesta = m[1].replace(/\\n/g, "\n"); } }
+    }
+    if (!respuesta) throw fail(502, "No se pudo generar la respuesta. Inténtalo de nuevo.");
 
     res.status(200).json({ respuesta, token: omision ? seal(omision) : null });
   } catch (e) {
     res.status(e.status || 500).json({ error: e.message || "Error inesperado." });
   }
 };
-
