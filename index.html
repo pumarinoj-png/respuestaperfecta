@@ -9,7 +9,7 @@
 <style>
   :root {
     --bg: #eef1f3; --surface: #ffffff; --ink: #18242f; --muted: #5b6b78; --line: #d3dae0;
-    --accent: #1f4e6b; --accent-ink: #ffffff; --pen: #b3261e; --pen-bg: #fbeceb; --hint-bg: #eaf1f6;
+    --accent: #1f4e6b; --accent-ink: #ffffff; --pen: #b3261e; --hint-bg: #eaf1f6;
     --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
     --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     color-scheme: light;
@@ -17,139 +17,88 @@
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #11181e; --surface: #19232b; --ink: #e6ebef; --muted: #9aabb8; --line: #2c3a45;
-      --accent: #7fb2d3; --accent-ink: #0e1a22; --pen: #ff8f86; --pen-bg: #331c1b; --hint-bg: #1c2d3a;
+      --accent: #7fb2d3; --accent-ink: #0e1a22; --pen: #ff8f86; --hint-bg: #1c2d3a;
       color-scheme: dark;
     }
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.55; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.55;
+         padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0); }
   main { max-width: 720px; margin: 0 auto; padding: 32px 18px 64px; }
-  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 6vw, 40px); line-height: 1.15; margin: 0 0 20px; letter-spacing: -0.01em; }
-  h2 { font-family: var(--serif); font-size: 22px; margin: 0 0 8px; font-weight: 600; }
-  h3 { font-size: 15px; margin: 14px 0 4px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 6vw, 40px); line-height: 1.15; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .lede { color: var(--muted); margin: 0 0 24px; max-width: 58ch; }
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
   label { display: block; font-weight: 500; margin: 0 0 6px; }
   input, textarea { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
-  textarea { resize: vertical; min-height: 92px; }
+  textarea { resize: vertical; min-height: 110px; }
   .field { margin-bottom: 16px; }
   button { font: inherit; font-weight: 600; cursor: pointer; border-radius: 6px; padding: 10px 18px; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); }
   button.ghost { background: transparent; color: var(--accent); }
-  button.pen { background: var(--pen); border-color: var(--pen); color: #fff; }
   button:disabled { opacity: .5; cursor: not-allowed; }
   :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
   .examples button { font-weight: 500; font-size: 14px; padding: 6px 12px; }
-  .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+  .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
   .status { color: var(--muted); font-size: 15px; margin: 0; }
-  .error { color: var(--pen); font-size: 15px; margin: 0 0 16px; }
-  .notice { background: var(--hint-bg); border-radius: 8px; padding: 12px 14px; font-size: 15px; margin-bottom: 20px; }
-  .link { background: none; border: 0; color: var(--muted); font-weight: 400; font-size: 13px; padding: 4px 0; text-decoration: underline; }
+  .error { color: var(--pen); font-size: 15px; margin: 14px 0 0; }
 
   .memo { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 28px 26px 18px; margin-bottom: 20px; }
   .memo header { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 18px; color: var(--muted); font-size: 14px; }
   .memo header strong { color: var(--ink); font-weight: 600; }
   .memo p { font-family: var(--serif); font-size: 18px; line-height: 1.7; margin: 0 0 14px; max-width: 64ch; }
   .memo p.disclaimer { font-family: var(--sans); font-size: 12px; line-height: 1.4; color: var(--muted); margin: 18px 0 0; padding-top: 10px; border-top: 1px solid var(--line); }
-  .hint { background: var(--hint-bg); border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 15px; }
-
-  .correction { border-left: 4px solid var(--pen); background: var(--pen-bg); border-radius: 0 8px 8px 0; padding: 18px 20px; margin-bottom: 20px; }
-  .correction h2 { color: var(--pen); }
+  .reveal-box { margin: 0 0 20px; }
+  .reveal-box button.link { background: none; border: 0; color: var(--muted); font-weight: 400; font-size: 13px; padding: 4px 0; text-decoration: underline; }
+  .reveal-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .reveal-row input { width: 140px; }
+  .correction { border-left: 4px solid var(--pen); background: var(--hint-bg); border-radius: 0 8px 8px 0; padding: 16px 18px; margin-top: 12px; }
+  .correction h2 { font-family: var(--serif); font-size: 20px; margin: 0 0 6px; color: var(--pen); }
   .correction p { margin: 0; }
-  .correction ul { margin: 6px 0 0; padding-left: 20px; }
-  @media (prefers-reduced-motion: no-preference) {
-    .correction { animation: reveal .35s ease-out; }
-    @keyframes reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
-    .bar { transition: width .4s ease; }
-  }
-
-  .opts { margin: 12px 0 8px; }
-  .opt { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; width: 100%; text-align: left; font-weight: 400; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; overflow: hidden; }
-  button.opt:hover:not(:disabled) { border-color: var(--accent); }
-  .opt .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--hint-bg); z-index: 0; }
-  .opt .txt, .opt .meta { position: relative; z-index: 1; }
-  .opt .meta { white-space: nowrap; font-size: 14px; color: var(--muted); text-align: right; }
-  .opt.mine, .opt.right { border: 2px solid var(--accent); padding: 11px 13px; }
-  .opt.right .meta { color: var(--ink); font-weight: 600; }
-
-  .fac-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .fac-bar .grow { flex: 1 1 auto; }
-  .preview-opt { margin: 4px 0; font-size: 15px; }
-  .solution-box { background: var(--pen-bg); border-left: 4px solid var(--pen); border-radius: 0 8px 8px 0; padding: 12px 14px; margin-top: 12px; font-size: 15px; }
-  .solution-box p { margin: 0 0 6px; }
-
-  body.proj main { max-width: 1040px; }
-  body.proj { font-size: 20px; }
-  body.proj .memo p { font-size: 26px; max-width: 70ch; }
-  body.proj .opt { font-size: 24px; padding: 16px 18px; }
-  body.proj .opt .meta { font-size: 20px; }
-  body.proj h2 { font-size: 30px; }
-  body.proj .hint, body.proj .correction p, body.proj .correction li { font-size: 22px; }
-  body.proj .correction h3 { font-size: 20px; }
-  body.proj #prep-card, body.proj #preview-card, body.proj #foot { display: none; }
   [hidden] { display: none !important; }
 </style>
 </head>
 <body>
 <main>
   <h1>La respuesta perfecta</h1>
-  <div id="error" class="error" role="alert" hidden></div>
+  <p class="lede">Escribe tu cargo y una pregunta de tu trabajo.</p>
 
-  <!-- Acceso del facilitador -->
-  <section class="card" id="pin-card" hidden>
-    <label for="pin">PIN de facilitador</label>
-    <input id="pin" type="password" autocomplete="off" inputmode="text">
-    <div class="actions">
-      <button id="pin-go" type="button">Entrar</button>
-      <button id="pin-cancel" type="button" class="ghost">Cancelar</button>
+  <section class="card" id="form-card">
+    <div class="examples" id="examples" aria-label="Ejemplos"></div>
+    <div class="field">
+      <label for="role">Tu cargo o rol</label>
+      <input id="role" type="text" maxlength="120" placeholder="Por ejemplo: jefa de recursos humanos">
     </div>
+    <div class="field">
+      <label for="question">Tu pregunta</label>
+      <textarea id="question" maxlength="1000" placeholder="Describe tu situación con los datos que conoces."></textarea>
+    </div>
+    <div class="field" id="code-field" hidden>
+      <label for="code">Código del taller</label>
+      <input id="code" type="text" autocomplete="off" placeholder="Te lo da quien dirige el taller">
+    </div>
+    <div class="actions">
+      <button id="go" type="button">Pedir respuesta</button>
+      <span class="status" id="busy" hidden>Pensando…</span>
+    </div>
+    <div class="error" id="error" role="alert" hidden></div>
   </section>
 
-  <!-- Panel del facilitador -->
-  <div id="fac" hidden>
-    <section class="card" id="prep-card">
-      <h2>Preparar una pregunta</h2>
-      <p class="status">Puedes dejarla lista antes del taller. Nadie más la ve hasta que la lances a la sala.</p>
-      <div class="examples" id="examples" style="margin-top:14px"></div>
-      <div class="field">
-        <label for="f-role">Cargo o rol</label>
-        <input id="f-role" type="text" maxlength="120" placeholder="Por ejemplo: gerente de operaciones">
+  <section id="result" hidden>
+    <div id="memo-holder"></div>
+    <div class="reveal-box">
+      <button id="reveal-open" type="button" class="link">Ver omisión</button>
+      <div class="reveal-row" id="reveal-row" hidden>
+        <input id="reveal-code" type="password" inputmode="numeric" autocomplete="off" aria-label="Código" placeholder="Código">
+        <button id="reveal-go" type="button">Ver</button>
       </div>
-      <div class="field">
-        <label for="f-question">Pregunta</label>
-        <textarea id="f-question" maxlength="1200" placeholder="Incluye datos concretos: plazos, presupuesto, personas, restricciones."></textarea>
-      </div>
-      <div class="actions" style="margin-top:0">
-        <button id="f-go" type="button">Generar respuesta</button>
-        <span class="status" id="f-progress" hidden>Generando… puede tardar hasta un minuto.</span>
-      </div>
-    </section>
-
-    <section class="card" id="preview-card" hidden>
-      <h2>Pregunta preparada</h2>
-      <p class="status" id="prep-summary"></p>
-      <div id="preview-body" hidden></div>
-      <div class="actions">
-        <button id="launch" type="button">Lanzar a la sala</button>
-        <button id="toggle-preview" type="button" class="ghost">Ver vista previa (incluye la solución)</button>
-      </div>
-      <p class="status" id="launch-note" hidden style="margin-top:10px">Revela o termina la sesión actual antes de lanzar otra.</p>
-    </section>
-
-    <section class="card" id="controls-card" hidden>
-      <div class="fac-bar">
-        <span class="status grow" id="vote-count"></span>
-        <button id="hint-live" type="button" class="ghost">Mostrar pista</button>
-        <button id="reveal-live" type="button" class="pen">Revelar el problema</button>
-        <button id="end-live" type="button" class="ghost">Terminar sesión</button>
-        <button id="proj" type="button" class="ghost" aria-pressed="false">Modo proyector</button>
-      </div>
-    </section>
-  </div>
-
-  <!-- Lo que ve la sala -->
-  <div id="room"></div>
-
-  <div id="foot"><button id="open-pin" type="button" class="link">Acceso facilitador</button></div>
+      <div class="error" id="reveal-error" role="alert" hidden></div>
+      <section class="correction" id="correction" hidden>
+        <h2>Lo que la respuesta ignoró</h2>
+        <p id="correction-text"></p>
+      </section>
+    </div>
+    <button id="again" type="button" class="ghost">Hacer otra pregunta</button>
+  </section>
 </main>
 
 <script>
@@ -163,297 +112,105 @@
     { role: "Jefe de marketing", q: "Tenemos USD 2.000 y un mes para lanzar un producto B2B. ¿Qué canal priorizamos?" }
   ];
 
-  /* ---------- Almacenamiento local (con respaldo en memoria) ---------- */
   var mem = {};
-  function lsGet(k) { try { var v = localStorage.getItem(k); return v == null ? (mem[k] || null) : v; } catch (e) { return mem[k] || null; } }
-  function lsSet(k, v) { mem[k] = v; try { localStorage.setItem(k, v); } catch (e) {} }
-  function ssGet(k) { try { return sessionStorage.getItem(k) || mem["s" + k] || null; } catch (e) { return mem["s" + k] || null; } }
-  function ssSet(k, v) { mem["s" + k] = v; try { sessionStorage.setItem(k, v); } catch (e) {} }
-  function ssDel(k) { delete mem["s" + k]; try { sessionStorage.removeItem(k); } catch (e) {} }
+  function ssGet(k) { try { return sessionStorage.getItem(k) || mem[k] || null; } catch (e) { return mem[k] || null; } }
+  function ssSet(k, v) { mem[k] = v; try { sessionStorage.setItem(k, v); } catch (e) {} }
 
-  var voter = lsGet("voter");
-  if (!voter) {
-    voter = "v" + Math.random().toString(36).slice(2) + Date.now().toString(36);
-    lsSet("voter", voter);
-  }
-
-  /* ---------- Estado ---------- */
-  var pin = ssGet("pin");
-  var isFac = false;
-  var state = { session: { phase: "idle" }, counts: null, total: 0, prepared: null, hintsAvailable: 0 };
-  var lastSig = "";
-  var previewOpen = false;
-  var preparedStamp = null;
-  var busy = false;
-
-  function el(tag, cls, text) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text != null) e.textContent = text;
-    return e;
-  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function showError(msg) { var e = $("error"); e.textContent = msg || ""; e.hidden = !msg; }
 
-  function buildMemo(role, text) {
+  EXAMPLES.forEach(function (ex) {
+    var b = el("button", "ghost", ex.role); b.type = "button";
+    b.addEventListener("click", function () { $("role").value = ex.role; $("question").value = ex.q; });
+    $("examples").appendChild(b);
+  });
+
+  // El facilitador puede compartir el enlace con el código: https://tu-sitio.vercel.app/?c=CODIGO
+  var urlCode = null;
+  try { urlCode = new URLSearchParams(location.search).get("c"); } catch (e) {}
+  if (urlCode) ssSet("code", urlCode);
+
+  function renderMemo(role, text) {
+    var holder = $("memo-holder"); holder.textContent = "";
     var memo = el("article", "memo");
     var h = el("header");
     h.appendChild(document.createTextNode("Respuesta para "));
     h.appendChild(el("strong", null, role));
     memo.appendChild(h);
-    String(text || "").split(/\n\s*\n/).forEach(function (p) {
-      var t = p.trim(); if (t) memo.appendChild(el("p", null, t));
-    });
+    text.split(/\n\s*\n/).forEach(function (p) { var t = p.trim(); if (t) memo.appendChild(el("p", null, t)); });
     memo.appendChild(el("p", "disclaimer", DISCLAIMER));
-    return memo;
+    holder.appendChild(memo);
   }
 
-  /* ---------- API ---------- */
-  async function api(path, opts) {
-    opts = opts || {};
-    var headers = { "Content-Type": "application/json" };
-    if (opts.fac && pin) headers["x-pin"] = pin;
-    var res = await fetch(path, {
-      method: opts.body ? "POST" : "GET",
-      headers: headers,
-      body: opts.body ? JSON.stringify(opts.body) : undefined,
-      cache: "no-store"
-    });
-    var data = {};
-    try { data = await res.json(); } catch (e) {}
-    if (!res.ok) {
-      var err = new Error(data.error || "Algo falló. Inténtalo de nuevo.");
-      err.status = res.status;
-      throw err;
-    }
-    return data;
-  }
+  var currentToken = null;
 
-  /* ---------- Sala ---------- */
-  function myVote() {
-    var s = state.session;
-    if (!s || !s.sessionId) return null;
-    var v = lsGet("vote:" + s.sessionId);
-    return v == null ? null : parseInt(v, 10);
-  }
-
-  function renderRoom() {
-    var root = $("room");
-    root.textContent = "";
-    var s = state.session;
-    var live = !!(s && s.sessionId && s.phase && s.phase !== "idle");
-
-    if (!live) {
-      root.appendChild(el("div", "notice", isFac
-        ? "No hay ninguna pregunta en la sala. Prepara una arriba y lánzala cuando el grupo esté listo."
-        : "Esperando a que el facilitador lance una pregunta. Esta pantalla se actualiza sola."));
-      return;
-    }
-
-    var revealed = s.phase === "revealed";
-    var counts = state.counts || [0, 0, 0, 0];
-    var total = state.total || 0;
-    var mine = myVote();
-
-    root.appendChild(buildMemo(s.role, s.respuesta));
-    root.appendChild(el("h2", null, "¿Qué falta en esta respuesta?"));
-    if (!revealed && !isFac) {
-      root.appendChild(el("p", "status", "Elige la opción que crees correcta. Puedes cambiar tu voto hasta que se revele."));
-    }
-
-    var list = el("div", "opts");
-    (s.opciones || []).forEach(function (text, i) {
-      var interactive = !revealed && !isFac;
-      var row = el(interactive ? "button" : "div", "opt");
-      if (interactive) { row.type = "button"; row.addEventListener("click", function () { castVote(i); }); }
-      var showBars = revealed || isFac;
-      if (showBars) {
-        var bar = el("span", "bar");
-        bar.style.width = (total ? Math.round(counts[i] / total * 100) : 0) + "%";
-        row.appendChild(bar);
-      }
-      row.appendChild(el("span", "txt", text));
-      var meta = [];
-      if (revealed && i === s.correctIdx) { meta.push("Correcta"); row.classList.add("right"); }
-      if (mine === i) { meta.push("Tu voto"); if (!revealed) row.classList.add("mine"); }
-      if (showBars) meta.push(counts[i] + (counts[i] === 1 ? " voto" : " votos"));
-      if (meta.length) row.appendChild(el("span", "meta", meta.join(" · ")));
-      list.appendChild(row);
-    });
-    root.appendChild(list);
-    if (!revealed && !isFac && mine != null) root.appendChild(el("p", "status", "Voto registrado."));
-
-    (s.hints || []).forEach(function (h, i) { root.appendChild(el("div", "hint", "Pista " + (i + 1) + ": " + h)); });
-
-    if (revealed && s.reveal) {
-      var c = el("section", "correction");
-      c.appendChild(el("h2", null, "Lo que la respuesta ignoró"));
-      [["Dato omitido", s.reveal.dato_omitido], ["Por qué importa", s.reveal.por_que_importa],
-       ["Qué pasaría si se sigue la recomendación", s.reveal.consecuencia], ["Un enfoque mejor", s.reveal.enfoque_mejor]
-      ].forEach(function (it) { c.appendChild(el("h3", null, it[0])); c.appendChild(el("p", null, it[1] || "")); });
-      if (s.reveal.preguntas_debate && s.reveal.preguntas_debate.length) {
-        c.appendChild(el("h3", null, "Para conversar en grupo"));
-        var ul = el("ul");
-        s.reveal.preguntas_debate.forEach(function (q) { ul.appendChild(el("li", null, q)); });
-        c.appendChild(ul);
-      }
-      root.appendChild(c);
-    }
-  }
-
-  async function castVote(i) {
-    var s = state.session;
-    if (!s || s.phase !== "voting") return;
+  async function ask() {
+    var role = $("role").value.trim(), question = $("question").value.trim();
     showError("");
-    lsSet("vote:" + s.sessionId, String(i));
-    renderRoom();
+    if (!role || !question) { showError("Escribe tu cargo y tu pregunta para continuar."); return; }
+    var code = $("code-field").hidden ? (ssGet("code") || "") : $("code").value.trim();
+    $("go").disabled = true; $("busy").hidden = false;
     try {
-      await api("/api/session", { body: { action: "vote", sid: s.sessionId, voter: voter, choice: i } });
-    } catch (e) {
-      showError(e.message);
-      poll();
-    }
-  }
-
-  /* ---------- Panel del facilitador ---------- */
-  function renderFac() {
-    if (!isFac) return;
-    var p = state.prepared;
-    var s = state.session;
-    var phase = (s && s.sessionId && s.phase) ? s.phase : "idle";
-
-    // Pregunta preparada
-    $("preview-card").hidden = !(p && p.respuesta);
-    if (p && p.respuesta) {
-      $("prep-summary").textContent = "Cargo: " + p.role + ".";
-      var body = $("preview-body");
-      if (preparedStamp !== p.preparedAt || body.dataset.open !== String(previewOpen)) {
-        body.textContent = "";
-        if (previewOpen) {
-          body.appendChild(buildMemo(p.role, p.respuesta));
-          body.appendChild(el("h3", null, "Opciones de votación"));
-          (p.opciones || []).forEach(function (o, i) {
-            body.appendChild(el("div", "preview-opt", (i === p.correctIdx ? "✔ Correcta: " : "• ") + o));
-          });
-          var sol = el("div", "solution-box");
-          sol.appendChild(el("p", null, "Dato omitido: " + (p.dato_omitido || "")));
-          sol.appendChild(el("p", null, "Por qué importa: " + (p.por_que_importa || "")));
-          body.appendChild(sol);
-        }
-        body.dataset.open = String(previewOpen);
-        preparedStamp = p.preparedAt;
+      var res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-code": code },
+        body: JSON.stringify({ role: role, question: question })
+      });
+      var data = {};
+      try { data = await res.json(); } catch (e) {}
+      if (res.status === 401) {
+        $("code-field").hidden = false;
+        showError(code ? "El código no es correcto." : "Escribe el código del taller para continuar.");
+        return;
       }
-      body.hidden = !previewOpen;
-      $("toggle-preview").textContent = previewOpen ? "Ocultar vista previa" : "Ver vista previa (incluye la solución)";
-    }
-    $("launch").disabled = busy || !p || phase === "voting";
-    $("launch-note").hidden = phase !== "voting";
-
-    // Controles de la sesión
-    $("controls-card").hidden = phase === "idle";
-    $("vote-count").textContent = (phase === "revealed" ? "Problema revelado. Votos totales: " : "Votos recibidos: ") + (state.total || 0) + ".";
-    var hintsOut = (s && s.hints) ? s.hints.length : 0;
-    $("hint-live").disabled = busy || phase !== "voting" || hintsOut >= (state.hintsAvailable || 0);
-    $("reveal-live").disabled = busy || phase !== "voting";
-    $("end-live").disabled = busy;
-  }
-
-  async function facAction(action) {
-    showError(""); busy = true; renderFac();
-    try {
-      await api("/api/session", { fac: true, body: { action: action } });
-      await poll(true);
+      if (!res.ok) { showError(data.error || "Algo falló. Inténtalo de nuevo."); return; }
+      if (!$("code-field").hidden) ssSet("code", $("code").value.trim());
+      renderMemo(role, data.respuesta);
+      currentToken = data.token || null;
+      $("reveal-row").hidden = true; $("reveal-error").hidden = true;
+      $("correction").hidden = true; $("reveal-code").value = "";
+      $("reveal-open").hidden = !currentToken;
+      $("form-card").hidden = true;
+      $("result").hidden = false;
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
-      showError(e.message);
-    } finally { busy = false; renderFac(); }
-  }
-  $("launch").addEventListener("click", function () { facAction("launch"); window.scrollTo({ top: 0, behavior: "smooth" }); });
-  $("hint-live").addEventListener("click", function () { facAction("hint"); });
-  $("reveal-live").addEventListener("click", function () { facAction("reveal"); });
-  $("end-live").addEventListener("click", function () { facAction("end"); });
-  $("toggle-preview").addEventListener("click", function () { previewOpen = !previewOpen; renderFac(); });
-
-  $("f-go").addEventListener("click", async function () {
-    var role = $("f-role").value.trim(), question = $("f-question").value.trim();
-    showError("");
-    if (!role || !question) { showError("Escribe el cargo y la pregunta para generar la respuesta."); return; }
-    $("f-go").disabled = true; $("f-progress").hidden = false;
-    try {
-      var r = await api("/api/generate", { fac: true, body: { role: role, question: question } });
-      state.prepared = r.prepared; previewOpen = false; preparedStamp = null;
-      renderFac();
-    } catch (e) {
-      showError(e.message);
-    } finally { $("f-go").disabled = false; $("f-progress").hidden = true; }
-  });
-
-  EXAMPLES.forEach(function (ex) {
-    var b = el("button", "ghost", ex.role); b.type = "button";
-    b.addEventListener("click", function () { $("f-role").value = ex.role; $("f-question").value = ex.q; });
-    $("examples").appendChild(b);
-  });
-
-  $("proj").addEventListener("click", function () {
-    var on = !document.body.classList.contains("proj");
-    document.body.classList.toggle("proj", on);
-    $("proj").setAttribute("aria-pressed", String(on));
-    $("proj").textContent = on ? "Salir del modo proyector" : "Modo proyector";
-  });
-
-  /* ---------- Acceso del facilitador ---------- */
-  $("open-pin").addEventListener("click", function () { $("pin-card").hidden = false; $("pin").focus(); });
-  $("pin-cancel").addEventListener("click", function () { $("pin-card").hidden = true; showError(""); });
-  $("pin").addEventListener("keydown", function (e) { if (e.key === "Enter") $("pin-go").click(); });
-  $("pin-go").addEventListener("click", async function () {
-    var candidate = $("pin").value;
-    if (!candidate) return;
-    pin = candidate; showError("");
-    try {
-      await api("/api/session?fac=1", { fac: true });
-      ssSet("pin", pin);
-      enterFacilitator();
-    } catch (e) {
-      pin = null;
-      showError(e.status === 401 ? "PIN incorrecto." : e.message);
-    }
-  });
-
-  function enterFacilitator() {
-    isFac = true;
-    $("pin-card").hidden = true; $("pin").value = "";
-    $("fac").hidden = false;
-    $("open-pin").hidden = true;
-    lastSig = "";
-    poll(true);
-  }
-
-  /* ---------- Sondeo ---------- */
-  async function poll(force) {
-    if (document.hidden && !force) return;
-    try {
-      var data = await api(isFac ? "/api/session?fac=1" : "/api/session", { fac: isFac });
-      state.session = data.session || { phase: "idle" };
-      state.counts = data.counts;
-      state.total = data.total || 0;
-      if (isFac) { state.prepared = data.prepared || state.prepared; state.hintsAvailable = data.hintsAvailable || 0; }
-      var sig = JSON.stringify([state.session, state.counts, state.total, myVote(), isFac,
-        isFac && state.prepared ? state.prepared.preparedAt : null, state.hintsAvailable]);
-      if (sig !== lastSig || force) {
-        lastSig = sig;
-        renderRoom(); renderFac();
-      }
-    } catch (e) {
-      if (e.status === 401 && isFac) { isFac = false; pin = null; ssDel("pin"); $("fac").hidden = true; $("open-pin").hidden = false; showError("Tu PIN dejó de ser válido."); }
+      showError("No se pudo conectar. Revisa tu conexión e inténtalo de nuevo.");
+    } finally {
+      $("go").disabled = false; $("busy").hidden = true;
     }
   }
 
-  /* ---------- Inicio ---------- */
-  renderRoom();
-  if (pin) {
-    api("/api/session?fac=1", { fac: true }).then(enterFacilitator).catch(function () { pin = null; ssDel("pin"); poll(true); });
-  } else {
-    poll(true);
-  }
-  setInterval(poll, 3000);
+  $("go").addEventListener("click", ask);
+  $("reveal-open").addEventListener("click", function () {
+    $("reveal-row").hidden = !$("reveal-row").hidden;
+    if (!$("reveal-row").hidden) $("reveal-code").focus();
+  });
+  $("reveal-code").addEventListener("keydown", function (e) { if (e.key === "Enter") $("reveal-go").click(); });
+  $("reveal-go").addEventListener("click", async function () {
+    var re = $("reveal-error"); re.hidden = true;
+    var code = $("reveal-code").value.trim();
+    if (!code || !currentToken) return;
+    $("reveal-go").disabled = true;
+    try {
+      var res = await fetch("/api/reveal", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code, token: currentToken })
+      });
+      var data = {};
+      try { data = await res.json(); } catch (e) {}
+      if (!res.ok) { re.textContent = data.error || "No se pudo mostrar la omisión."; re.hidden = false; return; }
+      $("correction-text").textContent = data.omision;
+      $("correction").hidden = false;
+      $("reveal-row").hidden = true;
+    } catch (e) {
+      re.textContent = "No se pudo conectar. Inténtalo de nuevo."; re.hidden = false;
+    } finally { $("reveal-go").disabled = false; }
+  });
+
+  $("again").addEventListener("click", function () {
+    $("result").hidden = true; $("form-card").hidden = false;
+    $("question").value = ""; $("question").focus();
+  });
 })();
 </script>
 </body>
