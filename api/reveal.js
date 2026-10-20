@@ -2,16 +2,19 @@
 const crypto = require("crypto");
 const { open } = require("./_crypto");
 
-const hits = new Map();
+// Solo se cuentan los intentos con código incorrecto (en una sala todos comparten IP).
+const fails = new Map();
 const WINDOW_MS = 10 * 60 * 1000;
+const MAX_FAILS = 30;
 
-function limited(ip) {
+function recent(ip) {
   const now = Date.now();
-  const list = (hits.get(ip) || []).filter(t => now - t < WINDOW_MS);
-  if (list.length >= 10) { hits.set(ip, list); return true; }
-  list.push(now); hits.set(ip, list);
-  if (hits.size > 5000) hits.clear();
-  return false;
+  return (fails.get(ip) || []).filter(t => now - t < WINDOW_MS);
+}
+function blocked(ip) { return recent(ip).length >= MAX_FAILS; }
+function recordFail(ip) {
+  const list = recent(ip); list.push(Date.now()); fails.set(ip, list);
+  if (fails.size > 5000) fails.clear();
 }
 
 function fail(status, message) { const e = new Error(message); e.status = status; return e; }
@@ -24,11 +27,11 @@ module.exports = async (req, res) => {
     if (typeof body === "string") { try { body = JSON.parse(body); } catch (e) { body = {}; } }
 
     const ip = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "desconocida";
-    if (limited(ip)) throw fail(429, "Demasiados intentos. Espera unos minutos.");
+    if (blocked(ip)) throw fail(429, "Demasiados intentos con código incorrecto. Espera unos minutos.");
 
     const expected = process.env.REVEAL_CODE || "123456";
     const a = Buffer.from(String(body.code || "")), b = Buffer.from(expected);
-    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) throw fail(401, "Código incorrecto.");
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) { recordFail(ip); throw fail(401, "Código incorrecto."); }
 
     if (!body.token) throw fail(404, "Esta respuesta no tiene una omisión disponible.");
     let omision;
