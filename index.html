@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>La respuesta perfecta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #eef1f3; --surface: #ffffff; --ink: #18242f; --muted: #5b6b78; --line: #d3dae0;
     --accent: #1f4e6b; --accent-ink: #ffffff; --pen: #b3261e; --hint-bg: #eaf1f6;
-    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
-    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --serif: Roboto, Arial, Helvetica, sans-serif;
+    --sans: Roboto, Arial, Helvetica, sans-serif;
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
@@ -45,7 +45,7 @@
   .memo { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 28px 26px 18px; margin-bottom: 20px; }
   .memo header { border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 18px; color: var(--muted); font-size: 14px; }
   .memo header strong { color: var(--ink); font-weight: 600; }
-  .memo p { font-family: var(--serif); font-size: 18px; line-height: 1.7; margin: 0 0 14px; max-width: 64ch; }
+  .memo p { font-family: var(--serif); font-size: 17px; line-height: 1.65; margin: 0 0 14px; max-width: 64ch; }
   .memo p.disclaimer { font-family: var(--sans); font-size: 12px; line-height: 1.4; color: var(--muted); margin: 18px 0 0; padding-top: 10px; border-top: 1px solid var(--line); }
   .reveal-box { margin: 0 0 20px; }
   .reveal-box button.link { background: none; border: 0; color: var(--muted); font-weight: 400; font-size: 13px; padding: 4px 0; text-decoration: underline; }
@@ -74,7 +74,7 @@
     </div>
     <div class="actions">
       <button id="go" type="button">Pedir respuesta</button>
-      <span class="status" id="busy" hidden>Pensando…</span>
+      <span class="status" id="busy" hidden>Pensando… si hay mucha gente a la vez, puede tardar un poco más.</span>
     </div>
     <div class="error" id="error" role="alert" hidden></div>
   </section>
