@@ -18,13 +18,6 @@ function limited(ip) {
 
 function fail(status, message) { const e = new Error(message); e.status = status; return e; }
 
-function codeOk(given) {
-  const code = process.env.ACCESS_CODE;
-  if (!code) return true; // sin código configurado, la herramienta es abierta
-  const a = Buffer.from(String(given || "")), b = Buffer.from(code);
-  return a.length === b.length && crypto.timingSafeEqual(a, b);
-}
-
 function buildPrompt(role, question) {
   return [
     "Eres parte de una herramienta de taller de alfabetización en IA. Los participantes escriben su cargo y una pregunta de su trabajo, y reciben una respuesta que parece real y bien hecha, pero cuya recomendación principal es problemática porque pasa por alto un dato importante.",
@@ -52,8 +45,6 @@ module.exports = async (req, res) => {
 
     let body = req.body || {};
     if (typeof body === "string") { try { body = JSON.parse(body); } catch (e) { body = {}; } }
-
-    if (!codeOk(req.headers["x-code"])) throw fail(401, "code");
 
     const ip = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || "desconocida";
     if (limited(ip)) throw fail(429, "Hiciste muchas preguntas seguidas. Espera unos minutos e inténtalo de nuevo.");
