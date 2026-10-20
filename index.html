@@ -72,10 +72,6 @@
       <label for="question">Tu pregunta</label>
       <textarea id="question" maxlength="1000" placeholder="Describe tu situación con los datos que conoces."></textarea>
     </div>
-    <div class="field" id="code-field" hidden>
-      <label for="code">Código del taller</label>
-      <input id="code" type="text" autocomplete="off" placeholder="Te lo da quien dirige el taller">
-    </div>
     <div class="actions">
       <button id="go" type="button">Pedir respuesta</button>
       <span class="status" id="busy" hidden>Pensando…</span>
@@ -112,10 +108,6 @@
     { role: "Jefe de marketing", q: "Tenemos USD 2.000 y un mes para lanzar un producto B2B. ¿Qué canal priorizamos?" }
   ];
 
-  var mem = {};
-  function ssGet(k) { try { return sessionStorage.getItem(k) || mem[k] || null; } catch (e) { return mem[k] || null; } }
-  function ssSet(k, v) { mem[k] = v; try { sessionStorage.setItem(k, v); } catch (e) {} }
-
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function showError(msg) { var e = $("error"); e.textContent = msg || ""; e.hidden = !msg; }
 
@@ -124,11 +116,6 @@
     b.addEventListener("click", function () { $("role").value = ex.role; $("question").value = ex.q; });
     $("examples").appendChild(b);
   });
-
-  // El facilitador puede compartir el enlace con el código: https://tu-sitio.vercel.app/?c=CODIGO
-  var urlCode = null;
-  try { urlCode = new URLSearchParams(location.search).get("c"); } catch (e) {}
-  if (urlCode) ssSet("code", urlCode);
 
   function renderMemo(role, text) {
     var holder = $("memo-holder"); holder.textContent = "";
@@ -148,23 +135,16 @@
     var role = $("role").value.trim(), question = $("question").value.trim();
     showError("");
     if (!role || !question) { showError("Escribe tu cargo y tu pregunta para continuar."); return; }
-    var code = $("code-field").hidden ? (ssGet("code") || "") : $("code").value.trim();
     $("go").disabled = true; $("busy").hidden = false;
     try {
       var res = await fetch("/api/ask", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-code": code },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: role, question: question })
       });
       var data = {};
       try { data = await res.json(); } catch (e) {}
-      if (res.status === 401) {
-        $("code-field").hidden = false;
-        showError(code ? "El código no es correcto." : "Escribe el código del taller para continuar.");
-        return;
-      }
       if (!res.ok) { showError(data.error || "Algo falló. Inténtalo de nuevo."); return; }
-      if (!$("code-field").hidden) ssSet("code", $("code").value.trim());
       renderMemo(role, data.respuesta);
       currentToken = data.token || null;
       $("reveal-row").hidden = true; $("reveal-error").hidden = true;
